@@ -22,13 +22,13 @@ public class LiturgiaDiariaService {
     try {
       LiturgiaCnbbApi liturgiaCnbbApi = restTemplate.getForObject(URL_BASE+data, LiturgiaCnbbApi.class);
       liturgiaDiaria = separarTextosLiturgia(liturgiaCnbbApi.getContent().getLeituras());
+      liturgiaDiaria.setSalmoResposta(separarSalmoResposta(liturgiaCnbbApi.getContent().getBody()));
       return liturgiaDiaria;
     } catch (Exception ex){
       liturgiaDiaria.setError(true);
       return liturgiaDiaria;
     }
   }
-
 
   private LiturgiaDiaria separarTextosLiturgia(String html) throws Exception {
     LiturgiaDiaria liturgiaDiaria = new LiturgiaDiaria();
@@ -70,5 +70,35 @@ public class LiturgiaDiariaService {
     return texto;
   }
 
+  private String separarSalmoResposta(String html) {
+    try {
+      String[] splitMissa = html.split("Missa do dia");
+      String[] splitSalmo = null;
+
+      if (splitMissa.length > 1) {
+        splitSalmo = splitMissa[1].split("Salmo responsorial")[1]
+            .split("\">R\\.</font>")[1]
+            .split("</div")[0]
+            .split("</span>");
+      } else {
+        splitSalmo = html.split("Salmo responsorial")[1]
+            .split("\">R\\.</font>")[1]
+            .split("<br><br><div>")[0]
+            .split("<br>\n<br><div>")[0]
+            .split("</span>");
+      }
+
+      return splitSalmo[0].replace("<br>", "")
+                          .replace("<div>", "")
+                          .replace("</div>", "")
+                          .replace("<p>", "")
+                          .replace("</p>", "")
+                          .replace("&nbsp;", "")
+                          .replace("  "," ")
+                          .trim();
+    } catch (Exception ex) {
+      return "";
+    }
+  }
 
 }
