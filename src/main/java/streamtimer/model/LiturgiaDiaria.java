@@ -1,4 +1,4 @@
-package model;
+package streamtimer.model;
 
 public class LiturgiaDiaria {
 

@@ -1,4 +1,4 @@
-package view;
+package streamtimer.view;
 
 import java.awt.Color;
 import java.io.File;
@@ -27,10 +27,12 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
-import model.LiturgiaDiaria;
+import streamtimer.model.LiturgiaDiaria;
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import service.LiturgiaDiariaService;
+import org.springframework.stereotype.Component;
+import streamtimer.service.LiturgiaDiariaService;
 
+@Component
 public class StreamTimer {
 
   private static final String ERROR_MSG = "Horario atual nao pode ser superior ao horario de inicio menos o tempo de abertura";
@@ -54,10 +56,6 @@ public class StreamTimer {
   private JButton btnStartTimer, btnUpdateTexts;
 
   private Thread thread;
-
-  public StreamTimer() throws Exception {
-    drawWindow();
-  }
 
   public void drawWindow() throws Exception {
     window = new JFrame("Stream Timer v2");
@@ -130,18 +128,19 @@ public class StreamTimer {
     SpinnerDateModel spinnerDateModel2 = new SpinnerDateModel(startTimeDefault, null, null,
         Calendar.DATE);
     spnLiturgyDate = new JSpinner(spinnerDateModel2);
-    DateEditor dateEditor2 = new DateEditor(spnLiturgyDate, "dd");
+    DateEditor dateEditor2 = new DateEditor(spnLiturgyDate, "dd/MM/yyyy");
     dateEditor.getTextField().setHorizontalAlignment(SwingConstants.RIGHT);
     spnLiturgyDate.setEditor(dateEditor2);
-    spnLiturgyDate.setBounds(170, 10, 60, 30);
+    spnLiturgyDate.setBounds(170, 10, 90, 30);
     panelLiturgy.add(spnLiturgyDate);
 
     btnUpdateTexts = new JButton("Atualizar Textos");
     btnUpdateTexts.setBounds(65, 50, 150, 30);
     btnUpdateTexts.addActionListener((java.awt.event.ActionEvent evt) -> {
-      Calendar dia = Calendar.getInstance();
-      dia.setTime((Date) spnLiturgyDate.getValue());
-      LiturgiaDiaria liturgiaDiaria = new LiturgiaDiariaService().getLiturgiaDiaria(dia.get(Calendar.DAY_OF_MONTH));
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime((Date) spnLiturgyDate.getValue());
+      LocalDate dataLiturgia = LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId()).toLocalDate();
+      LiturgiaDiaria liturgiaDiaria = new LiturgiaDiariaService().getLiturgiaDiaria(dataLiturgia);
       if (!liturgiaDiaria.getError()) {
         try {
           updateLiturgy(liturgiaDiaria);
