@@ -83,8 +83,7 @@ public class LiturgiaDiariaService {
       } else {
         splitSalmo = html.split("Salmo responsorial")[1]
             .split("\">R\\.( )*</font>")[1]
-            .split("<br><br><div>")[0]
-            .split("<br>\n<br><div>")[0]
+            .split("<br>(\n)*(<br>)*[<div></div>]")[0]
             .split("</span>");
       }
 

@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTextArea;
@@ -53,6 +54,7 @@ public class StreamTimer {
   private JTextField txtOpeningVideoTime;
   private JTextField txtText1, txtText2, txtText3, txtText4;
   private JTextArea txtText5;
+  private JScrollPane scrollText5;
   private JButton btnStartTimer, btnUpdateTexts;
 
   private Thread thread;
@@ -199,9 +201,12 @@ public class StreamTimer {
     panelLiturgy.add(lblText5);
 
     txtText5 = new JTextArea();
-    txtText5.setBounds(75, 210, 185, 40);
+    txtText5.setBounds(75, 210, 185, 50);
     txtText5.setEditable(false);
-    panelLiturgy.add(txtText5);
+
+    scrollText5 = new JScrollPane(txtText5);
+    scrollText5.setBounds(75, 210, 185, 50);
+    panelLiturgy.add(scrollText5);
 
     window.add(panelTimer);
     window.add(panelLiturgy);
