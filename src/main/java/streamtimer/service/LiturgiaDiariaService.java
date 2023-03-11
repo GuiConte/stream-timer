@@ -83,8 +83,9 @@ public class LiturgiaDiariaService {
       } else {
         splitSalmo = html.split("Salmo responsorial")[1]
             .split("\">R\\.( )*</font>")[1]
-            .split("<br>( )*(\n)*( )*(<br>)*[<div></div>]")[0]
-            .split("</span>");
+            .split("<br>( )*(\n)*( )*(<br>)*<(/)*div.*")[0]
+            .split("<(/)*span.*")[0]
+            .split("<font.*");
       }
 
       return splitSalmo[0].replace("<br>", "")
@@ -94,6 +95,8 @@ public class LiturgiaDiariaService {
                           .replace("</p>", "")
                           .replace("&nbsp;", "")
                           .replace("  "," ")
+                          .replace("\n"," ")
+                          .replace("*","")
                           .trim();
     } catch (Exception ex) {
       return "";
