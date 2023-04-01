@@ -28,6 +28,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import streamtimer.model.LiturgiaDiaria;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.springframework.stereotype.Component;
@@ -55,9 +56,12 @@ public class StreamTimer {
   private JTextField txtText1, txtText2, txtText3, txtText4;
   private JTextArea txtText5;
   private JScrollPane scrollText5;
-  private JButton btnStartTimer, btnUpdateTexts;
+  private JButton btnStartTimer, btnUpdateTexts, btnAleluia;
 
   private Thread thread;
+
+  @Autowired
+  private Aleluia aleluia;
 
   public void drawWindow() throws Exception {
     window = new JFrame("Stream Timer v2");
@@ -115,6 +119,13 @@ public class StreamTimer {
     lblTimeLeft = new JLabel(TIME_LEFT);
     lblTimeLeft.setBounds(20, 130, 120, 22);
     panelTimer.add(lblTimeLeft);
+
+    btnAleluia = new JButton("Sabado Aleluia");
+    btnAleluia.setBounds(30, 220, 150, 30);
+    btnAleluia.addActionListener((java.awt.event.ActionEvent evt) -> {
+      aleluia.draw();
+    });
+    panelTimer.add(btnAleluia);
 
     /* ********************************************************************************************* */
 
