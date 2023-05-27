@@ -9,7 +9,7 @@ public class LiturgiaDiariaService {
 
   private static final String LEITURA_1 = "Leitura I (";
   private static final String LEITURA_2 = "Leitura II (";
-  private static final String SALMO = "Salmo Responsorial";
+  private static final String SALMO = "Salmo Responsorial ";
   private static final String EVANGELHO = "Evangelho (";
 
 
@@ -39,7 +39,7 @@ public class LiturgiaDiariaService {
         leitura = LEITURA_1.concat(leitura).concat(")");
         liturgiaDiaria.setLeitura1(leitura);
       } else if(i == 3) {
-        leitura = SALMO.concat(leitura);
+        leitura = SALMO.concat(leitura).replace("  ", " ");
         liturgiaDiaria.setSalmo(leitura);
       } else if(i == 4) {
         leitura = LEITURA_2.concat(leitura).concat(")");
@@ -78,12 +78,13 @@ public class LiturgiaDiariaService {
       if (splitMissa.length > 1) {
         splitSalmo = splitMissa[1].split("Salmo responsorial")[1]
             .split("\">R\\.( )*</font>")[1]
+            .split("(<br>)*( )*(\n)*( )*(<br>)*(<(/)*span.*)*<(/)*div.*")[0]
             .split("</div")[0]
             .split("</span>");
       } else {
         splitSalmo = html.split("Salmo responsorial")[1]
             .split("\">R\\.( )*</font>")[1]
-            .split("<br>( )*(\n)*( )*(<br>)*<(/)*div.*")[0]
+            .split("(<br>)*( )*(\n)*( )*(<br>)*(<(/)*span.*)*<(/)*div.*")[0]
             .split("<(/)*span.*")[0]
             .split("<font.*");
       }

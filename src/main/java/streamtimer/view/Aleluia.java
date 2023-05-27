@@ -24,7 +24,7 @@ public class Aleluia {
   private static final String LEITURAS_PROPERTIES_NAME = "textos.properties";
   private static final String LEITURAS_PROPERTIES_PATH = CURRENT_PATH + File.separator + LEITURAS_PROPERTIES_NAME;
 
-  private static final String LEITURA_1 = "Leitura I (";
+  private static final String LEITURA = "Leitura (";
   private static final String SALMO = "Salmo Responsorial ";
 
   private JFrame window;
@@ -60,12 +60,12 @@ public class Aleluia {
         Integer index = listLiturgy.getSelectedIndex() + 1;
         listLiturgy.setSelectedIndex(index);
         if (index < leituras.length){
-          liturgiaDiaria.setLeitura1(LEITURA_1.concat(leituras[index]).concat(")"));
+          liturgiaDiaria.setLeitura1(LEITURA.concat(leituras[index]).concat(")"));
           liturgiaDiaria.setSalmo(SALMO.concat(salmos[index]));
           liturgiaDiaria.setSalmoResposta(respostas[index]);
         } else {
           listLiturgy.setSelectedIndex(0);
-          liturgiaDiaria.setLeitura1(LEITURA_1.concat(leituras[0]).concat(")"));
+          liturgiaDiaria.setLeitura1(LEITURA.concat(leituras[0]).concat(")"));
           liturgiaDiaria.setSalmo(SALMO.concat(salmos[0]));
           liturgiaDiaria.setSalmoResposta(respostas[0]);
         }
@@ -109,7 +109,7 @@ public class Aleluia {
       salmos = props.getProperty("salmos").split(";");
       respostas = props.getProperty("respostas").split(";");
       liturgiaDiaria = new LiturgiaDiaria();
-      liturgiaDiaria.setLeitura1(LEITURA_1.concat(leituras[0]).concat(")"));
+      liturgiaDiaria.setLeitura1(LEITURA.concat(leituras[0]).concat(")"));
       liturgiaDiaria.setSalmo(SALMO.concat(salmos[0]));
       liturgiaDiaria.setSalmoResposta(respostas[0]);
       updateLiturgy(liturgiaDiaria);
