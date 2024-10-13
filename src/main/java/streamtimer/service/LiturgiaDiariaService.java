@@ -1,6 +1,11 @@
 package streamtimer.service;
 
 import java.time.LocalDate;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.web.client.RestTemplate;
 import streamtimer.model.LiturgiaCnbbApi;
 import streamtimer.model.LiturgiaDiaria;
@@ -71,37 +76,71 @@ public class LiturgiaDiariaService {
   }
 
   private String separarSalmoResposta(String html) {
-    try {
-      String[] splitMissa = html.split("Missa do dia");
-      String[] splitSalmo = null;
+    Document doc = Jsoup.parse(html);
 
-      if (splitMissa.length > 1) {
-        splitSalmo = splitMissa[1].split("Salmo responsorial")[1]
-            .split("\">R\\.( )*</font>")[1]
-            .split("(<br>)*( )*(\n)*( )*(<br>)*(<(/)*span.*)*<(/)*div.*")[0]
-            .split("</div")[0]
-            .split("</span>");
-      } else {
-        splitSalmo = html.split("Salmo responsorial")[1]
-            .split("\">R\\.( )*</font>")[1]
-            .split("(<br>)*( )*(\n)*( )*(<br>)*(<(/)*span.*)*<(/)*div.*")[0]
-            .split("<(/)*span.*")[0]
-            .split("<font.*");
+    Element salmoElement = doc.selectFirst("font:contains(Salmo responsorial)");
+
+    if (salmoElement != null) {
+      Element proximoElemento = salmoElement.nextElementSibling();
+      StringBuilder salmoResposta = new StringBuilder();
+      boolean salmoRespostaFound = false;
+
+      while (proximoElemento != null) {
+        String texto = proximoElemento.text().trim();
+
+        // Verifica se o próximo elemento contém a referência do salmo e pula
+        if (texto.matches("^[A-Z][a-z]* [\\d,()]+.*") || texto.isEmpty()) {
+          proximoElemento = proximoElemento.nextElementSibling();
+          continue;
+        }
+
+        if (!texto.isEmpty() && !texto.matches("^\\d+.*") && texto.matches(".*\\b\\w{3,}\\b.*") && texto.matches(".*[,.!:].*")) {
+          salmoResposta.append(texto).append("\n");
+          salmoRespostaFound = true;
+        } else if (salmoRespostaFound) {
+          break;
+        }
+
+        proximoElemento = proximoElemento.nextElementSibling();
       }
-
-      return splitSalmo[0].replace("<br>", "")
-                          .replace("<div>", "")
-                          .replace("</div>", "")
-                          .replace("<p>", "")
-                          .replace("</p>", "")
-                          .replace("&nbsp;", "")
-                          .replace("  "," ")
-                          .replace("\n"," ")
-                          .replace("*","")
-                          .trim();
-    } catch (Exception ex) {
+      return salmoResposta.toString().replaceAll("^R\\.", "").trim();
+    } else {
       return "";
     }
   }
+
+//  private String separarSalmoResposta(String html) {
+//    try {
+//      String[] splitMissa = html.split("Missa do dia");
+//      String[] splitSalmo = null;
+//
+//      if (splitMissa.length > 1) {
+//        splitSalmo = splitMissa[1].split("Salmo responsorial")[1]
+//            .split("\">R\\.( )*</font>")[1]
+//            .split("(<br>)*( )*(\n)*( )*(<br>)*(<(/)*span.*)*<(/)*div.*")[0]
+//            .split("</div")[0]
+//            .split("</span>");
+//      } else {
+//        splitSalmo = html.split("Salmo responsorial")[1]
+//            .split("\">R\\.( )*</font>")[1]
+//            .split("(<br>)*( )*(\n)*( )*(<br>)*(<(/)*span.*)*<(/)*div.*")[0]
+//            .split("<(/)*span.*")[0]
+//            .split("<font.*");
+//      }
+//
+//      return splitSalmo[0].replace("<br>", "")
+//                          .replace("<div>", "")
+//                          .replace("</div>", "")
+//                          .replace("<p>", "")
+//                          .replace("</p>", "")
+//                          .replace("&nbsp;", "")
+//                          .replace("  "," ")
+//                          .replace("\n"," ")
+//                          .replace("*","")
+//                          .trim();
+//    } catch (Exception ex) {
+//      return "";
+//    }
+//  }
 
 }
