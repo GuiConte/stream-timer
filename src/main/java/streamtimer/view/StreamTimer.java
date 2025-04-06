@@ -33,6 +33,7 @@ import streamtimer.model.LiturgiaDiaria;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.springframework.stereotype.Component;
 import streamtimer.service.LiturgiaDiariaService;
+import streamtimer.service.LiturgiaDiariaServiceLiturgiaAPIv2Impl;
 
 @Component
 public class StreamTimer {
@@ -59,6 +60,7 @@ public class StreamTimer {
   private JButton btnStartTimer, btnUpdateTexts, btnAleluia;
 
   private Thread thread;
+  private LiturgiaDiariaService liturgiaDiariaService = new LiturgiaDiariaServiceLiturgiaAPIv2Impl();
 
   @Autowired
   private Aleluia aleluia;
@@ -123,7 +125,10 @@ public class StreamTimer {
     btnAleluia = new JButton("Sabado Aleluia");
     btnAleluia.setBounds(30, 220, 150, 30);
     btnAleluia.addActionListener((java.awt.event.ActionEvent evt) -> {
-      aleluia.draw();
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime((Date) spnLiturgyDate.getValue());
+      LocalDate dataLiturgia = LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId()).toLocalDate();
+      aleluia.draw(dataLiturgia);
     });
     panelTimer.add(btnAleluia);
 
@@ -153,7 +158,7 @@ public class StreamTimer {
       Calendar calendar = Calendar.getInstance();
       calendar.setTime((Date) spnLiturgyDate.getValue());
       LocalDate dataLiturgia = LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId()).toLocalDate();
-      LiturgiaDiaria liturgiaDiaria = new LiturgiaDiariaService().getLiturgiaDiaria(dataLiturgia);
+      LiturgiaDiaria liturgiaDiaria = liturgiaDiariaService.getLiturgiaDiaria(dataLiturgia);
       if (!liturgiaDiaria.getError()) {
         try {
           updateLiturgy(liturgiaDiaria);
